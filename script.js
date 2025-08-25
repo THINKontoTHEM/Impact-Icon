@@ -5,7 +5,7 @@ const query = encodeURIComponent("select B");
 const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${sheetName}&tq=${query}`;
 
 let values = [];
-let units = ["KG", "KG", "L", "KG", ""]; // 單位
+let units = ["KG", "KG", "L", "KG", "PCS"]; // 保留單位
 
 fetch(url)
   .then(res => res.text())
@@ -15,11 +15,11 @@ fetch(url)
 
     // 數據處理
     values = [
-      parseFloat(rows[0].c[0].v).toFixed(2),  // B2
-      parseFloat(rows[1].c[0].v).toFixed(2),  // B3
-      parseFloat(rows[2].c[0].v).toFixed(2),  // B4
-      parseFloat(rows[3].c[0].v).toFixed(2),  // B5
-      Math.round(rows[4].c[0].v)              // B6 → 整數
+      parseFloat(rows[0].c[0].v).toFixed(2),
+      parseFloat(rows[1].c[0].v).toFixed(2),
+      parseFloat(rows[2].c[0].v).toFixed(2),
+      parseFloat(rows[3].c[0].v).toFixed(2),
+      Math.round(rows[4].c[0].v)
     ];
 
     // 初始化：顯示 ??? + 單位
@@ -38,7 +38,7 @@ document.querySelectorAll(".card").forEach((card, i) => {
   card.addEventListener("click", () => {
     if (values.length === 0) return;
 
-    // 顯示實際數字（只替換 ??? 部分）
+    // 顯示實際數字（保留單位）
     const digitsEl = numberEl.querySelector(".digits");
     if (digitsEl && digitsEl.innerText === "???") {
       digitsEl.innerText = values[i];
@@ -58,17 +58,15 @@ document.querySelectorAll(".card").forEach((card, i) => {
   });
 });
 
-
-// 全屏 + 開場動畫控制
+// 開場動畫控制
 const startScreen = document.querySelector(".start-screen");
 const openingScene = document.querySelector(".opening-scene");
-const container = document.querySelector(".container");
+const container = document.querySelector(".data-panel-wrapper");
 const textEl = document.querySelector(".opening-text");
 
 let textFinished = false;
 
 document.body.addEventListener("click", async () => {
-  // 第一次點擊 → 進入全屏 + 打字動畫
   if (startScreen.style.display !== "none") {
     if (document.documentElement.requestFullscreen) {
       await document.documentElement.requestFullscreen();
@@ -89,15 +87,12 @@ document.body.addEventListener("click", async () => {
         textFinished = true;
       }
     }, 50);
-  }
-
-  // 第二次點擊 → 漸隱 Opening Scene，顯示 Panel
-  else if (textFinished && openingScene.style.display !== "none") {
+  } else if (textFinished && openingScene.style.display !== "none") {
     openingScene.style.transition = "opacity 1s";
     openingScene.style.opacity = "0";
     setTimeout(() => {
       openingScene.style.display = "none";
-      container.style.display = "grid";
+      container.style.display = "flex"; // 顯示數據面板
     }, 1000);
   }
 });

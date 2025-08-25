@@ -7,22 +7,25 @@ body {
   overflow-y: auto;
 }
 
-/* Data Panel 容器 */
-.container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 電腦螢幕下一行最多 3 個 */
-  justify-content: center;                /* 最後一行不足 3 個時居中 */
-  align-content: center;                  /* 整體上下居中 */
-  gap: 50px;                              /* 卡片間距更大 */
-  padding: 40px;
-  box-sizing: border-box;
-
+/* 大容器包裹 Data Panel，實現上下左右居中 */
+.data-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* 上下居中 */
+  align-items: center;      /* 左右居中 */
+  height: 100vh;            /* 滿屏高度 */
   width: 100%;
-  max-width: 1800px;
-  margin: 0 auto;
-  height: 100vh;                          /* 剛好佔滿一屏 */
-  display: none;                          /* 開始時隱藏 */
-  overflow: hidden;                       /* 不要出現滾動條 */
+  box-sizing: border-box;
+  padding: 40px;
+  gap: 75px;                /* 調整兩行間距 */
+  overflow: hidden;         /* 不出現滾動條 */
+}
+
+/* 每行容器 */
+.container-row {
+  display: flex;
+  justify-content: center;  /* 水平居中每行 */
+  gap: 45px;                /* 卡片間距 */
 }
 
 /* 卡片 */
@@ -30,9 +33,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  max-width: 500px;
-  width: 100%;
-  min-height: 150px;
+  width: 475px;
+  max-width: 525px;
+  min-height: 125px;
   background: #111;
   border-radius: 20px;
   padding: 20px;
@@ -42,8 +45,8 @@ body {
 
 .icon-container {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,20 +80,18 @@ body {
   opacity: 0;
   transition: opacity 1s;
 }
-
 .unit {
-  font-size: pt;
-  font-weight: 400;
-  color: rgb(138,196,71);
-  margin-left: 6px;
+  font-size: 18pt;            /* 比 number 小一些 */
+  font-weight: 400;            /* 正常字重 */
+  color: rgb(138,196,71);     /* 同色系保持一致 */
+  margin-left: 6px;            /* 與數字有間距 */
 }
-
 .desc {
   font-size: 12pt;
   line-height: 1.4;
   color: #fff;
   font-weight: 400;
-  text-transform: none; /* 保持原本大小寫 */
+  text-transform: none;
 }
 
 /* 開始畫面 */
@@ -135,7 +136,6 @@ body {
   color: rgb(235,62,148);
 }
 
-/* 固定 Seedlings.svg */
 .seedling-bg {
   position: fixed;
   bottom: 0;
