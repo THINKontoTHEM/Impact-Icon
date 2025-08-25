@@ -5,6 +5,7 @@ const query = encodeURIComponent("select B");
 const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${sheetName}&tq=${query}`;
 
 let values = [];
+let units = ["KG", "KG", "L", "KG", ""]; // 單位
 
 fetch(url)
   .then(res => res.text())
@@ -12,13 +13,20 @@ fetch(url)
     const json = JSON.parse(rep.substring(47, rep.length - 2));
     const rows = json.table.rows;
 
+    // 數據處理
     values = [
-      [rows[0].c[0].v, "KG"],
-      [rows[1].c[0].v, "KG"],
-      [rows[2].c[0].v, "L"],
-      [rows[3].c[0].v, "KG"],
-      [rows[4].c[0].v, ""]
+      parseFloat(rows[0].c[0].v).toFixed(2),  // B2
+      parseFloat(rows[1].c[0].v).toFixed(2),  // B3
+      parseFloat(rows[2].c[0].v).toFixed(2),  // B4
+      parseFloat(rows[3].c[0].v).toFixed(2),  // B5
+      Math.round(rows[4].c[0].v)              // B6 → 整數
     ];
+
+    // 初始化：顯示 ??? + 單位
+    document.querySelectorAll(".number").forEach((el, i) => {
+      el.innerHTML = `<span class="digits">???</span> <span class="unit">${units[i]}</span>`;
+      el.style.opacity = "1"; // 顯示出來
+    });
   });
 
 // 點擊卡片觸發
@@ -26,31 +34,22 @@ document.querySelectorAll(".card").forEach((card, i) => {
   const front = card.querySelector(".front");
   const back = card.querySelector(".back");
   const numberEl = card.querySelector(".number");
-  const unitEl = card.querySelector(".unit");
 
   card.addEventListener("click", () => {
     if (values.length === 0) return;
 
-    if (numberEl.innerText === "") {
-      let num = values[i][0];
-
-      // 格式化數字：最後一張取整，其他保留兩位
-      if (i === 4) {
-        num = Math.round(num);
-      } else {
-        num = parseFloat(num).toFixed(2);
-      }
-
-      numberEl.innerText = num;
-      unitEl.innerText = values[i][1];
-      numberEl.style.opacity = "1";
-      unitEl.style.opacity = "1";
+    // 顯示實際數字（只替換 ??? 部分）
+    const digitsEl = numberEl.querySelector(".digits");
+    if (digitsEl && digitsEl.innerText === "???") {
+      digitsEl.innerText = values[i];
     }
 
+    // Icon A -> B
     front.style.opacity = "0";
     back.style.opacity = "1";
     back.style.transform = "scale(1) rotate(360deg)";
 
+    // 3 秒後回到 A
     setTimeout(() => {
       back.style.opacity = "0";
       front.style.opacity = "1";
@@ -58,6 +57,7 @@ document.querySelectorAll(".card").forEach((card, i) => {
     }, 3000);
   });
 });
+
 
 // 全屏 + 開場動畫控制
 const startScreen = document.querySelector(".start-screen");
