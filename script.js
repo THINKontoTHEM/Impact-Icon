@@ -75,7 +75,7 @@ document.body.addEventListener("click", async () => {
     startScreen.style.display = "none";
     openingScene.style.display = "flex";
 
-    const text = `AT OUR FUTURE FARM,\nEVERY LEAF TELLS A <span class="highlight">SUSTAINABLE STORY.</span>`;
+    const text = `AT OUR FUTURE FARM,\nEVERY HARVEST GROWS A <span class="highlight">LASTING IMPACT.</span>`;
     textEl.innerHTML = "";
 
     let i = 0;
